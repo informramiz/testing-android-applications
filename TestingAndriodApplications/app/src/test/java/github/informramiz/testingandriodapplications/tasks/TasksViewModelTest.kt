@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import github.informramiz.testingandriodapplications.util.getOrAwaitValue
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,11 +20,18 @@ class TasksViewModelTest {
     //in order to avoid any undesired behavior
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
+
+    //subject under test
+    private lateinit var tasksViewModel: TasksViewModel
+
+    //make sure each test has a fresh instance of subject under test
+    @Before
+    fun setup() {
+        tasksViewModel = TasksViewModel(ApplicationProvider.getApplicationContext())
+    }
+
     @Test
     fun addNewTask_setsNewTaskEvent() {
-        //GIVEN:
-        val tasksViewModel = TasksViewModel(ApplicationProvider.getApplicationContext())
-
         //WHEN:
         tasksViewModel.addNewTask()
 
@@ -34,9 +42,6 @@ class TasksViewModelTest {
 
     @Test
     fun setFilterAllTasks_addTaskButtonVisible() {
-        //GIVEN
-        val tasksViewModel = TasksViewModel(ApplicationProvider.getApplicationContext())
-
         //WHEN
         tasksViewModel.setFiltering(TasksFilterType.ALL_TASKS)
 
