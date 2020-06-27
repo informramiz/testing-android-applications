@@ -4,8 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import github.informramiz.testingandriodapplications.util.getOrAwaitValue
-import org.hamcrest.CoreMatchers.not
-import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -21,7 +20,7 @@ class TasksViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
     @Test
-    fun addNewTask_call_setsNewTaskEvent() {
+    fun addNewTask_setsNewTaskEvent() {
         //GIVEN:
         val tasksViewModel = TasksViewModel(ApplicationProvider.getApplicationContext())
 
@@ -31,5 +30,18 @@ class TasksViewModelTest {
         //THEN:
         val value = tasksViewModel.newTaskEvent.getOrAwaitValue()
         assertThat(value.getContentIfNotHandled(), not(nullValue()))
+    }
+
+    @Test
+    fun setFilterAllTasks_addTaskButtonVisible() {
+        //GIVEN
+        val tasksViewModel = TasksViewModel(ApplicationProvider.getApplicationContext())
+
+        //WHEN
+        tasksViewModel.setFiltering(TasksFilterType.ALL_TASKS)
+
+        //THEN
+        val value = tasksViewModel.tasksAddViewVisible.getOrAwaitValue()
+        assertThat(value, `is`(true))
     }
 }
