@@ -19,6 +19,7 @@ import github.informramiz.testingandriodapplications.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import github.informramiz.testingandriodapplications.R
+import github.informramiz.testingandriodapplications.data.source.DefaultTasksRepository
 import github.informramiz.testingandriodapplications.databinding.TasksFragBinding
 import timber.log.Timber
 
@@ -27,7 +28,11 @@ import timber.log.Timber
  */
 class TasksFragment : Fragment() {
 
-    private val viewModel by viewModels<TasksViewModel>()
+    private val viewModel by viewModels<TasksViewModel> {
+        TasksViewModel.TasksViewModelFactory(
+            DefaultTasksRepository.getRepository(requireActivity().application)
+        )
+    }
 
     private val args: TasksFragmentArgs by navArgs()
 

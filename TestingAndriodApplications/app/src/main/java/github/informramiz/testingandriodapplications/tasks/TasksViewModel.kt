@@ -1,26 +1,21 @@
 package github.informramiz.testingandriodapplications.tasks
 
-import android.app.Application
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import github.informramiz.testingandriodapplications.Event
+import github.informramiz.testingandriodapplications.R
 import github.informramiz.testingandriodapplications.data.Result
 import github.informramiz.testingandriodapplications.data.Result.Success
 import github.informramiz.testingandriodapplications.data.Task
-import github.informramiz.testingandriodapplications.data.source.DefaultTasksRepository
 import github.informramiz.testingandriodapplications.data.source.TasksDataSource
+import github.informramiz.testingandriodapplications.data.source.TasksRepository
 import kotlinx.coroutines.launch
-import github.informramiz.testingandriodapplications.R
 
 /**
  * ViewModel for the task list screen.
  */
-class TasksViewModel(application: Application) : AndroidViewModel(application) {
-
-    // Note, for testing and architecture purposes, it's bad practice to construct the repository
-    // here. We'll show you how to fix this during the codelab
-    private val tasksRepository = DefaultTasksRepository.getRepository(application)
+class TasksViewModel(private val tasksRepository: TasksRepository) : ViewModel() {
 
     private val _forceUpdate = MutableLiveData<Boolean>(false)
 
@@ -214,5 +209,12 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
 
     fun refresh() {
         _forceUpdate.value = true
+    }
+
+    class TasksViewModelFactory(private val tasksRepository: TasksRepository) : ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            @Suppress("UNCHECKED_CAST")
+            return TasksViewModel(tasksRepository) as T
+        }
     }
 }
