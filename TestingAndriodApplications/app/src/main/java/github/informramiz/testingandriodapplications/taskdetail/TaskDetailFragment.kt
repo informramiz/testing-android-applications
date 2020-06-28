@@ -17,6 +17,7 @@ import github.informramiz.testingandriodapplications.util.setupRefreshLayout
 import github.informramiz.testingandriodapplications.util.setupSnackbar
 import com.google.android.material.snackbar.Snackbar
 import github.informramiz.testingandriodapplications.R
+import github.informramiz.testingandriodapplications.data.source.DefaultTasksRepository
 import github.informramiz.testingandriodapplications.databinding.TaskdetailFragBinding
 
 /**
@@ -27,7 +28,11 @@ class TaskDetailFragment : Fragment() {
 
     private val args: TaskDetailFragmentArgs by navArgs()
 
-    private val viewModel by viewModels<TaskDetailViewModel>()
+    private val viewModel by viewModels<TaskDetailViewModel> {
+        TaskDetailViewModel.TaskDetailViewModelFactory(
+            DefaultTasksRepository.getRepository(requireActivity().application)
+        )
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
