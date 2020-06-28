@@ -1,7 +1,8 @@
-package github.informramiz.testingandriodapplications.data
+package github.informramiz.testingandriodapplications.data.source
 
 import androidx.lifecycle.LiveData
-import github.informramiz.testingandriodapplications.data.source.TasksDataSource
+import github.informramiz.testingandriodapplications.data.Result
+import github.informramiz.testingandriodapplications.data.Task
 
 
 /**
@@ -18,7 +19,13 @@ class FakeTasksDataSource(var tasks: MutableList<Task>? = mutableListOf()) : Tas
     }
 
     override suspend fun getTasks(): Result<List<Task>> {
-        return tasks?.let { Result.Success(it) } ?: Result.Error(Exception("No Tasks found"))
+        return tasks?.let {
+            Result.Success(
+                it
+            )
+        } ?: Result.Error(
+            Exception("No Tasks found")
+        )
     }
 
     override fun observeTasks(): LiveData<Result<List<Task>>> {

@@ -1,6 +1,5 @@
 package github.informramiz.testingandriodapplications.data.source
 
-import github.informramiz.testingandriodapplications.data.FakeTasksDataSource
 import github.informramiz.testingandriodapplications.data.Result
 import github.informramiz.testingandriodapplications.data.Task
 import kotlinx.coroutines.Dispatchers
@@ -34,8 +33,14 @@ class DefaultTasksRepositoryTest {
 
     @Before
     fun setup() {
-        remoteDataSource = FakeTasksDataSource(remoteTasks.toMutableList())
-        localDataSource = FakeTasksDataSource(localTasks.toMutableList())
+        remoteDataSource =
+            FakeTasksDataSource(
+                remoteTasks.toMutableList()
+            )
+        localDataSource =
+            FakeTasksDataSource(
+                localTasks.toMutableList()
+            )
         defaultTasksRepository = DefaultTasksRepository(remoteDataSource, localDataSource, Dispatchers.Unconfined)
     }
 
