@@ -88,6 +88,9 @@ dependencies {
     // Once https://issuetracker.google.com/128612536 is fixed this can be fixed.
     implementation "androidx.fragment:fragment-testing:$fragmentVersion"
     implementation "androidx.test:core:$androidXTestCoreVersion"
+    // for Mocks
+    androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
+    androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:$dexMakerVersion"
 
     // ---------- Testing End -------------- //
 
