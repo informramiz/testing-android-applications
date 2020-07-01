@@ -2,6 +2,7 @@ package github.informramiz.testingandriodapplications.data.source
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import github.informramiz.testingandriodapplications.data.Result
 import github.informramiz.testingandriodapplications.data.Task
 import kotlinx.coroutines.runBlocking
@@ -29,48 +30,67 @@ class FakeTasksRepository : TasksRepository {
         return observableTasks
     }
 
+    override suspend fun saveTask(task: Task) {
+        tasksServiceData[task.id] = task
+    }
+
     override suspend fun refreshTask(taskId: String) {
-        TODO("Not yet implemented")
+       refreshTasks()
     }
 
     override fun observeTask(taskId: String): LiveData<Result<Task>> {
-        TODO("Not yet implemented")
+        runBlocking { refreshTasks() }
+        return observableTasks.map { tasksResult ->
+            when(tasksResult) {
+                is Result.Loading -> Result.Loading
+                is Result.Error -> Result.Error(tasksResult.exception)
+                is Result.Success -> {
+                    val result = tasksResult.data.firstOrNull() { it.id == taskId }
+                    result ?: return@map Result.Error(Exception("Not task found"))
+                    Result.Success(result)
+                }
+            }
+        }
     }
 
     override suspend fun getTask(taskId: String, forceUpdate: Boolean): Result<Task> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun saveTask(task: Task) {
-        TODO("Not yet implemented")
+        return tasksServiceData[taskId]?.let { Result.Success(it) } ?: Result.Error(Exception("No task found"))
     }
 
     override suspend fun completeTask(task: Task) {
-        TODO("Not yet implemented")
+        completeTask(task.id)
     }
 
     override suspend fun completeTask(taskId: String) {
-        TODO("Not yet implemented")
+        setTaskStatus(taskId, true)
     }
 
     override suspend fun activateTask(task: Task) {
-        TODO("Not yet implemented")
+        activateTask(task.id)
     }
 
     override suspend fun activateTask(taskId: String) {
-        TODO("Not yet implemented")
+        setTaskStatus(taskId, isComplete = false)
+    }
+
+    private suspend fun setTaskStatus(taskId: String, isComplete: Boolean) {
+        val task = tasksServiceData[taskId] ?: return
+        tasksServiceData[taskId] = task.copy(isCompleted = isComplete)
+        refreshTasks()
     }
 
     override suspend fun clearCompletedTasks() {
-        TODO("Not yet implemented")
+        tasksServiceData = tasksServiceData.filter { !it.value.isCompleted } as LinkedHashMap<String, Task>
     }
 
     override suspend fun deleteAllTasks() {
-        TODO("Not yet implemented")
+        tasksServiceData.clear()
+        refreshTasks()
     }
 
     override suspend fun deleteTask(taskId: String) {
-        TODO("Not yet implemented")
+        tasksServiceData.remove(taskId)
+        refreshTasks()
     }
 
     //helper method to add tasks
