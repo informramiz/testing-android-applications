@@ -7,6 +7,11 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 android {
     compileSdkVersion compile_SdkVersion
 
+    packagingOptions {
+        exclude "META-INF/AL2.0"
+        exclude "META-INF/LGPL2.1"
+    }
+
     sourceSets {
         //specify a directory for common test codes
         String sharedTestDirectory = "src/sharedTest/java"
