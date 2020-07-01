@@ -5,6 +5,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -13,6 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import github.informramiz.testingandriodapplications.R
 import github.informramiz.testingandriodapplications.ServiceLocator
+import github.informramiz.testingandriodapplications.TodoApplication
 import github.informramiz.testingandriodapplications.data.Task
 import github.informramiz.testingandriodapplications.data.source.FakeTasksRepository
 import github.informramiz.testingandriodapplications.data.source.TasksRepository
@@ -62,10 +64,42 @@ class TasksFragmentTest {
 
         //WHEN: A task item is clicked in the list
         onView(withId(R.id.tasks_list))
-            .perform(RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(hasDescendant(
-                withText(activeTask1.title)), click()))
+            .perform(
+                RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                    hasDescendant(
+                        withText(activeTask1.title)
+                    ), click()
+                )
+            )
 
         //THEN: app should navigate to the detail fragment
-        verify(navControllerMock).navigate(TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment(activeTask1.id))
+        verify(navControllerMock).navigate(
+            TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment(
+                activeTask1.id
+            )
+        )
+    }
+
+    @Test
+    fun clickAddTaskButton_navigateToAddEditTaskFragment() {
+        //GIVEN: tasks fragment
+        val scenario = launchFragmentInContainer<TasksFragment>(Bundle(), R.style.AppTheme)
+        val navControllerMock = mock(NavController::class.java)
+        scenario.onFragment {
+            Navigation.setViewNavController(it.requireView(), navControllerMock)
+        }
+
+        //WHEN: add task button is clicked
+        onView(withId(R.id.add_task_fab))
+            .perform(click())
+
+        //THEN: app should navigate to addEdit screen
+        verify(navControllerMock).navigate(
+            TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment(
+                null,
+                ApplicationProvider.getApplicationContext<TodoApplication>()
+                    .getString(R.string.add_task)
+            )
+        )
     }
 }
