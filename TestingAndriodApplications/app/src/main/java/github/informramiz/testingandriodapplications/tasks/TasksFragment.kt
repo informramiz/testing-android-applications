@@ -11,7 +11,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import github.informramiz.testingandriodapplications.EventObserver
 import github.informramiz.testingandriodapplications.R
-import github.informramiz.testingandriodapplications.ServiceLocator
+import github.informramiz.testingandriodapplications.TodoApplication
 import github.informramiz.testingandriodapplications.data.Task
 import github.informramiz.testingandriodapplications.databinding.TasksFragBinding
 import github.informramiz.testingandriodapplications.util.setupRefreshLayout
@@ -25,7 +25,7 @@ class TasksFragment : Fragment() {
 
     private val viewModel by viewModels<TasksViewModel> {
         TasksViewModel.TasksViewModelFactory(
-            ServiceLocator.provideTasksRepository(requireActivity())
+            (requireActivity().application as TodoApplication).tasksRepository
         )
     }
 

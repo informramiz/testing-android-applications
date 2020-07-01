@@ -9,7 +9,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import github.informramiz.testingandriodapplications.EventObserver
 import github.informramiz.testingandriodapplications.R
-import github.informramiz.testingandriodapplications.ServiceLocator
+import github.informramiz.testingandriodapplications.TodoApplication
 import github.informramiz.testingandriodapplications.databinding.TaskdetailFragBinding
 import github.informramiz.testingandriodapplications.tasks.DELETE_RESULT_OK
 import github.informramiz.testingandriodapplications.util.setupRefreshLayout
@@ -25,7 +25,7 @@ class TaskDetailFragment : Fragment() {
 
     private val viewModel by viewModels<TaskDetailViewModel> {
         TaskDetailViewModel.TaskDetailViewModelFactory(
-            ServiceLocator.provideTasksRepository(requireContext())
+            (requireActivity().application as TodoApplication).tasksRepository
         )
     }
 

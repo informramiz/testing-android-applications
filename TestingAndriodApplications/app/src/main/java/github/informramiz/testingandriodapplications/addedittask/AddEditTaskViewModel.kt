@@ -1,13 +1,16 @@
 package github.informramiz.testingandriodapplications.addedittask
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import github.informramiz.testingandriodapplications.Event
+import github.informramiz.testingandriodapplications.R
+import github.informramiz.testingandriodapplications.TodoApplication
 import github.informramiz.testingandriodapplications.data.Result.Success
 import github.informramiz.testingandriodapplications.data.Task
-import github.informramiz.testingandriodapplications.data.source.DefaultTasksRepository
 import kotlinx.coroutines.launch
-import github.informramiz.testingandriodapplications.R
 
 /**
  * ViewModel for the Add/Edit screen.
@@ -16,7 +19,7 @@ class AddEditTaskViewModel(application: Application) : AndroidViewModel(applicat
 
     // Note, for testing and architecture purposes, it's bad practice to construct the repository
     // here. We'll show you how to fix this during the codelab
-    private val tasksRepository = DefaultTasksRepository.getRepository(application)
+    private val tasksRepository = (application as TodoApplication).tasksRepository
 
     // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String>()
