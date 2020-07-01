@@ -66,4 +66,32 @@ class TaskDetailFragmentTest {
             .check(matches(isDisplayed()))
             .check(matches(not(isChecked())))
     }
+
+    @Test
+    fun completeTaskDetails_displayInUI() = runBlockingTest {
+        //GIVEN: active task
+        val activeTask = Task("My Task", "My task is active", isCompleted = true)
+        repository.saveTask(activeTask)
+
+        //WHEN: TaskDetailFragment is launched
+        val args = TaskDetailFragmentArgs(activeTask.id).toBundle()
+        launchFragmentInContainer<TaskDetailFragment>(args, R.style.AppTheme)
+
+        //THEN: it should display the details of the task correctly
+
+        //1. Make sure title is displayed correctly
+        onView(withId(R.id.task_detail_title_text))
+            .check(matches(isDisplayed()))
+            .check(matches(withText(activeTask.title)))
+
+        //2. Make sure description is displayed correctly
+        onView(withId(R.id.task_detail_description_text))
+            .check(matches(isDisplayed()))
+            .check(matches(withText(activeTask.description)))
+
+        //3. Make sure checkbox is there and it is not checked
+        onView(withId(R.id.task_detail_complete_checkbox))
+            .check(matches(isDisplayed()))
+            .check(matches(isChecked()))
+    }
 }
