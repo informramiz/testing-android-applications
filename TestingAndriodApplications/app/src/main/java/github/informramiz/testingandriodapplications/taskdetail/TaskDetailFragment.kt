@@ -1,24 +1,19 @@
 package github.informramiz.testingandriodapplications.taskdetail
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import github.informramiz.testingandriodapplications.EventObserver
+import github.informramiz.testingandriodapplications.R
+import github.informramiz.testingandriodapplications.ServiceLocator
+import github.informramiz.testingandriodapplications.databinding.TaskdetailFragBinding
 import github.informramiz.testingandriodapplications.tasks.DELETE_RESULT_OK
 import github.informramiz.testingandriodapplications.util.setupRefreshLayout
 import github.informramiz.testingandriodapplications.util.setupSnackbar
-import com.google.android.material.snackbar.Snackbar
-import github.informramiz.testingandriodapplications.R
-import github.informramiz.testingandriodapplications.data.source.DefaultTasksRepository
-import github.informramiz.testingandriodapplications.databinding.TaskdetailFragBinding
 
 /**
  * Main UI for the task detail screen.
@@ -30,7 +25,7 @@ class TaskDetailFragment : Fragment() {
 
     private val viewModel by viewModels<TaskDetailViewModel> {
         TaskDetailViewModel.TaskDetailViewModelFactory(
-            DefaultTasksRepository.getRepository(requireActivity().application)
+            ServiceLocator.provideTasksRepository(requireContext())
         )
     }
 

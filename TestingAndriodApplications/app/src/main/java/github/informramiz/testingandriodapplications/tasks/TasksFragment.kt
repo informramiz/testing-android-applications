@@ -1,26 +1,21 @@
 package github.informramiz.testingandriodapplications.tasks
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import github.informramiz.testingandriodapplications.EventObserver
-import github.informramiz.testingandriodapplications.data.Task
-import github.informramiz.testingandriodapplications.util.setupRefreshLayout
-import github.informramiz.testingandriodapplications.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import github.informramiz.testingandriodapplications.EventObserver
 import github.informramiz.testingandriodapplications.R
-import github.informramiz.testingandriodapplications.data.source.DefaultTasksRepository
+import github.informramiz.testingandriodapplications.ServiceLocator
+import github.informramiz.testingandriodapplications.data.Task
 import github.informramiz.testingandriodapplications.databinding.TasksFragBinding
+import github.informramiz.testingandriodapplications.util.setupRefreshLayout
+import github.informramiz.testingandriodapplications.util.setupSnackbar
 import timber.log.Timber
 
 /**
@@ -30,7 +25,7 @@ class TasksFragment : Fragment() {
 
     private val viewModel by viewModels<TasksViewModel> {
         TasksViewModel.TasksViewModelFactory(
-            DefaultTasksRepository.getRepository(requireActivity().application)
+            ServiceLocator.provideTasksRepository(requireActivity())
         )
     }
 
