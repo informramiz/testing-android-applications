@@ -1,13 +1,12 @@
 package github.informramiz.testingandriodapplications.tasks
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import github.informramiz.testingandriodapplications.data.Task
 import github.informramiz.testingandriodapplications.data.source.FakeTasksRepository
 import github.informramiz.testingandriodapplications.util.getOrAwaitValue
 import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

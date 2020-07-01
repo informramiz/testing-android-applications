@@ -7,6 +7,19 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 android {
     compileSdkVersion compile_SdkVersion
 
+    sourceSets {
+        //specify a directory for common test codes
+        String sharedTestDirectory = "src/sharedTest/java"
+
+        test {
+            java.srcDir(sharedTestDirectory)
+        }
+
+        androidTest {
+            java.srcDir(sharedTestDirectory)
+        }
+    }
+
     dataBinding {
         enabled = true
         enabledForTests = true
