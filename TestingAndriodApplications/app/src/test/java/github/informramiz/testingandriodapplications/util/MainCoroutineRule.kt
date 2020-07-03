@@ -12,6 +12,9 @@ import org.junit.runner.Description
 
 /**
  * Created by Ramiz Raja on 03/07/2020.
+ * Dispatcher.Main uses Android's Looper.Main but Android's Main looper is not available
+ * in local tests so we have to change Dispatcher.Main with our test dispatcher. This is what
+ * this rule does
  */
 @ExperimentalCoroutinesApi
 class MainCoroutineRule(val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()) :
