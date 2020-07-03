@@ -59,4 +59,21 @@ class TasksLocalDataSourceTest {
         assertThat(result is Result.Success, `is`(true))
         assertThat((result as Result.Success).data, IsEqual(task))
     }
+
+    // runBlocking is used here because of https://github.com/Kotlin/kotlinx.coroutines/issues/1204
+    // TODO: Replace with runBlockingTest once issue is resolved
+    @Test
+    fun completeTask_returnsTaskAsComplete() = runBlocking {
+        //WHEN:
+        //1. Save task
+        localDataSource.saveTask(task)
+        //2. Mark task as complete
+        localDataSource.completeTask(task)
+        //3. load the task
+        val result = localDataSource.getTask(task.id)
+
+        //THEN: the loaded task should be marked as complete
+        assertThat(result is Result.Success, `is`(true))
+        assertThat((result as Result.Success).data.isCompleted, `is`(true))
+    }
 }
