@@ -16,8 +16,16 @@ class FakeTasksRepository : TasksRepository {
     var tasksServiceData = LinkedHashMap<String, Task>()
     //A LiveData to return from methods
     private val observableTasks = MutableLiveData<Result<List<Task>>>()
+    private var shouldReturnError = false
+
+    fun setReturnError(returnError: Boolean) {
+        shouldReturnError = returnError
+    }
 
     override suspend fun getTasks(forceUpdate: Boolean): Result<List<Task>> {
+        if (shouldReturnError) {
+            return Result.Error(Exception("My test exception"))
+        }
         return Result.Success(tasksServiceData.values.toList())
     }
 
@@ -54,6 +62,9 @@ class FakeTasksRepository : TasksRepository {
     }
 
     override suspend fun getTask(taskId: String, forceUpdate: Boolean): Result<Task> {
+        if (shouldReturnError) {
+            return Result.Error(Exception("My test exception"))
+        }
         return tasksServiceData[taskId]?.let { Result.Success(it) } ?: Result.Error(Exception("No task found"))
     }
 

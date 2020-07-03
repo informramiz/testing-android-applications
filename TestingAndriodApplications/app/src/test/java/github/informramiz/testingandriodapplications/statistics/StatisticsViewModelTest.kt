@@ -107,4 +107,18 @@ class StatisticsViewModelTest {
         //2. When data is loaded, loading status should be false
         assertThat(statisticsViewModel.dataLoading.getOrAwaitValue(), `is`(false))
     }
+
+    @Test
+    fun refreshTasks_whenTasksNotAvailable_displayError() {
+        //WHEN: tasks are not available for no internet or any other reason
+        fakeTasksRepository.setReturnError(true)
+        statisticsViewModel.refresh()
+
+        //THEN: error should be set and tasks empty status should set
+        assertThat(statisticsViewModel.error.getOrAwaitValue(), `is`(true))
+        assertThat(statisticsViewModel.empty.getOrAwaitValue(), `is`(true))
+
+        //reset the error to false
+        fakeTasksRepository.setReturnError(false)
+    }
 }
