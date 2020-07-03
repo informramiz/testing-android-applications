@@ -5,14 +5,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import github.informramiz.testingandriodapplications.R
 import github.informramiz.testingandriodapplications.data.Task
 import github.informramiz.testingandriodapplications.data.source.FakeTasksRepository
+import github.informramiz.testingandriodapplications.util.MainCoroutineRule
 import github.informramiz.testingandriodapplications.util.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.*
-import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -30,6 +27,11 @@ class TasksViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    //Dispatcher.Main uses Android's Looper.Main but Android's Main looper is not available
+    // in local tests so we have to change Dispatcher.Main with our test dispatcher
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
+
     private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
     //dependencies
@@ -41,10 +43,6 @@ class TasksViewModelTest {
     //make sure each test has a fresh instance of subject under test
     @Before
     fun setup() {
-        //Dispatcher.Main uses Android's Looper.Main but Android's Main looper is not available
-        // in local tests so we have to change Dispatcher.Main with our test dispatcher
-        Dispatchers.setMain(testCoroutineDispatcher)
-
         fakeTasksRepository = FakeTasksRepository()
         val task1 = Task("Title1", "Description1")
         val task2 = Task("Title2", "Description2", true)
@@ -52,12 +50,6 @@ class TasksViewModelTest {
         fakeTasksRepository.addTasks(task1, task2, task3)
 
         tasksViewModel = TasksViewModel(fakeTasksRepository)
-    }
-
-    @After
-    fun teardown() {
-        Dispatchers.resetMain()
-        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 
     @Test
