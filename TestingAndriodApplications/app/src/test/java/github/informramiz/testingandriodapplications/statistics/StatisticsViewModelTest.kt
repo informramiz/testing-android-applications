@@ -85,4 +85,26 @@ class StatisticsViewModelTest {
         assertThat(activeTasks, `is`(50f))
         assertThat(completedTasks, `is`(50f))
     }
+
+    @Test
+    fun refreshTasks_loading() {
+        //we want to test that loading status changes in following ways
+        //1. Loading = true, when data is loading
+        // 2. Loading = false, when data is loaded.
+        //so we want to check the asynchronous logic here so we are not going to use runBlockTest
+        //instead we are going to use pause/resume for dispatcher
+
+        //as soon as a coroutine tries to launch, pause it immediately before executing the coroutine
+        mainCoroutineRule.pauseDispatcher()
+        //WHEN: Tasks are refreshed
+        statisticsViewModel.refresh() //this will be paused at viewModelScope.launch {} line
+
+        //THEN:
+        //1. When data is loading, loading status should be true
+        assertThat(statisticsViewModel.dataLoading.getOrAwaitValue(), `is`(true))
+        //now resume the dispatcher so that data is loaded
+        mainCoroutineRule.resumeDispatcher()
+        //2. When data is loaded, loading status should be false
+        assertThat(statisticsViewModel.dataLoading.getOrAwaitValue(), `is`(false))
+    }
 }
