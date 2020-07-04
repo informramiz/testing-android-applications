@@ -47,7 +47,7 @@ class DataBindingIdlingResource : IdlingResource {
             activity.mainView.postDelayed(16) { isIdleNow }
         }
 
-        return isIdleNow
+        return isIdle
     }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback) {
