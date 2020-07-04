@@ -106,4 +106,46 @@ class TasksActivityTest {
         // Make sure the activity is closed before resetting the db.
         activityScenario.close()
     }
+
+    @Test
+    fun createTaskAndDeleteTask_taskSavedAndDeleted() = runBlocking {
+        //GIVEN: a saved task in list
+        val task = Task("Title1", "Description")
+
+        //launch activity
+        val activityScenario = ActivityScenario.launch(TasksActivity::class.java)
+        //let the DataBindingIdlingResource monitor the activity for any pending data bindings
+        //to signal Espresso accordingly
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        //save a task
+        onView(withId(R.id.add_task_fab))
+            .perform(click())
+        onView(withId(R.id.add_task_title_edit_text))
+            .perform(replaceText(task.title))
+        onView(withId(R.id.add_task_description_edit_text))
+            .perform(replaceText(task.description))
+        onView(withId(R.id.save_task_fab)).perform(click())
+        onView(withText(task.title))
+            .check(matches(isDisplayed()))
+
+        //1. Open Details by clicking on a task in the list
+        onView(withText(task.title)).perform(click())
+        //2. verify that detail screen is correct
+        onView(withId(R.id.task_detail_title_text))
+            .check(matches(withText(task.title)))
+        onView(withId(R.id.task_detail_description_text))
+            .check(matches(withText(task.description)))
+        onView(withId(R.id.task_detail_complete_checkbox))
+            .check(matches(isNotChecked()))
+        
+        onView(withId(R.id.menu_delete))
+            .perform(click())
+
+        //THEN: It task should be removed
+        onView(withText(task.title)).check(doesNotExist())
+
+        // Make sure the activity is closed before resetting the db.
+        activityScenario.close()
+    }
 }
