@@ -14,7 +14,9 @@ import androidx.test.filters.LargeTest
 import github.informramiz.testingandriodapplications.data.Task
 import github.informramiz.testingandriodapplications.data.source.TasksRepository
 import github.informramiz.testingandriodapplications.tasks.TasksActivity
+import github.informramiz.testingandriodapplications.util.DataBindingIdlingResource
 import github.informramiz.testingandriodapplications.util.EspressoIdlingResource
+import github.informramiz.testingandriodapplications.util.monitorActivity
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -30,9 +32,13 @@ import org.junit.runner.RunWith
 class TasksActivityTest {
     private lateinit var tasksRepository: TasksRepository
 
+    //idling resource to signal when Espresso has to wait for data binding to complete its bindings
+    private val dataBindingIdlingResource = DataBindingIdlingResource()
+
     @Before
     fun setup() {
-        tasksRepository = ServiceLocator.provideTasksRepository(ApplicationProvider.getApplicationContext())
+        tasksRepository =
+            ServiceLocator.provideTasksRepository(ApplicationProvider.getApplicationContext())
         runBlocking { tasksRepository.deleteAllTasks() }
     }
 
@@ -47,7 +53,8 @@ class TasksActivityTest {
      */
     @Before
     fun registerIdlingResources() {
-       IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().register(dataBindingIdlingResource)
     }
 
     /**
@@ -56,6 +63,7 @@ class TasksActivityTest {
     @After
     fun unregisterIdlingResources() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
     @Test
@@ -66,6 +74,9 @@ class TasksActivityTest {
 
         //launch activity
         val activityScenario = ActivityScenario.launch(TasksActivity::class.java)
+        //let the DataBindingIdlingResource monitor the activity for any pending data bindings
+        //to signal Espresso accordingly
+        dataBindingIdlingResource.monitorActivity(activityScenario)
 
         //1. click on a task in the list
         onView(withText(task.title)).perform(click())
