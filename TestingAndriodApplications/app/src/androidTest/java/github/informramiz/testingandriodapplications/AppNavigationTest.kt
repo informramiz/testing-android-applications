@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -106,6 +107,44 @@ class AppNavigationTest {
         //now press Up button again
         onView(withContentDescription(activityScenario.getToolbarNavigationButtonContentDescription()))
             .perform(click())
+
+        //THEN: should result in task edit -> task detail -> tasks list
+        onView(withText(task.title))
+            .check(matches(isDisplayed()))
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun openTaskDetailToTaskEditScreen_doubleBackButtonPress_returnsToMainScreen() = runBlocking {
+        //GIVEN: start tasks list screen
+        //save a task
+        val task = Task("Title1", "description")
+        repository.saveTask(task)
+
+        val activityScenario = ActivityScenario.launch(TasksActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        //WHEN: go to task detail -> task edit screen and then
+        // press Back button twice
+
+        // click on this newly added task
+        onView(withText(task.title))
+            .perform(click())
+
+        //click on edit task button
+        onView(withId(R.id.edit_task_fab))
+            .perform(click())
+
+        //now press Back button
+        pressBack()
+
+        //make sure now we are on task detail screen
+        onView(withId(R.id.task_detail_title_text))
+            .check(matches(isDisplayed()))
+
+        //now press Back button again
+        pressBack()
 
         //THEN: should result in task edit -> task detail -> tasks list
         onView(withText(task.title))
