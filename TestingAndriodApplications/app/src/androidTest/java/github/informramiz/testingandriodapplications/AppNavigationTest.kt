@@ -11,15 +11,16 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerMatchers.isClosed
 import androidx.test.espresso.contrib.DrawerMatchers.isOpen
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import github.informramiz.testingandriodapplications.data.Task
 import github.informramiz.testingandriodapplications.data.source.TasksRepository
 import github.informramiz.testingandriodapplications.tasks.TasksActivity
 import github.informramiz.testingandriodapplications.util.DataBindingIdlingResource
 import github.informramiz.testingandriodapplications.util.EspressoIdlingResource
 import github.informramiz.testingandriodapplications.util.monitorActivity
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -39,6 +40,7 @@ class AppNavigationTest {
     @Before
     fun setup() {
         repository = ServiceLocator.provideTasksRepository(ApplicationProvider.getApplicationContext())
+        runBlocking { repository.deleteAllTasks() }
         IdlingRegistry.getInstance().register(dataBindingIdlingResource)
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
@@ -69,6 +71,46 @@ class AppNavigationTest {
             .check(matches(isOpen(Gravity.START)))
 
         //close activity scenario
+        activityScenario.close()
+    }
+
+    @Test
+    fun openTaskDetailToTaskEditScreen_doubleUpButtonPress_returnsToMainScreen() = runBlocking {
+        //GIVEN: start tasks list screen
+        //save a task
+        val task = Task("Title1", "description")
+        repository.saveTask(task)
+
+        val activityScenario = ActivityScenario.launch(TasksActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        //WHEN: go to task detail -> task edit screen and then
+        // press Up button twice
+
+        // click on this newly added task
+        onView(withText(task.title))
+            .perform(click())
+
+        //click on edit task button
+        onView(withId(R.id.edit_task_fab))
+            .perform(click())
+
+        //now press Up button
+        onView(withContentDescription(activityScenario.getToolbarNavigationButtonContentDescription()))
+            .perform(click())
+
+        //make sure now we are on task detail screen
+        onView(withId(R.id.task_detail_title_text))
+            .check(matches(isDisplayed()))
+
+        //now press Up button again
+        onView(withContentDescription(activityScenario.getToolbarNavigationButtonContentDescription()))
+            .perform(click())
+
+        //THEN: should result in task edit -> task detail -> tasks list
+        onView(withText(task.title))
+            .check(matches(isDisplayed()))
+
         activityScenario.close()
     }
 }
