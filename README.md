@@ -2,7 +2,8 @@
 A showcase of how to test different parts of an Android application using automated tests.
 
 
-![Edit and Save Task](demos/edit_save_task_test.gif) ![Task Details](demos/task_details_test.gif) ![Crete And Delete Task](demos/create_delete_task_test.gif)
+![Edit and Save Task](demos/edit_save_task_test.gif) ![Task Details](demos/task_details_test.gif) 
+![Crete And Delete Task](demos/create_delete_task_test.gif) ![App Nav Test](demos/app
 
 #### Testing Types Covered
 
